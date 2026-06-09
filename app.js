@@ -156,6 +156,17 @@ new IntersectionObserver(([entry]) => {
 }, { threshold: 0 }).observe(tabBar);
 
 
+// ===== TECH CAROUSEL ARROWS: SCROLL SECTION INTO VIEW =====
+['techPrev', 'techNext'].forEach(id => {
+  const btn = document.getElementById(id);
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const outer = btn.closest('.tech-carousel-outer');
+    const section = outer && (outer.closest('.accordion-item') || outer);
+    if (section) setTimeout(() => section.scrollIntoView({ behavior: 'smooth', block: 'start' }), 520);
+  });
+});
+
 // ===== CAPTION NEXT BUTTONS =====
 document.querySelectorAll('.cap-next-btn').forEach(btn => {
   // Button may live inside a .tech-slide (Technology section) or in a
@@ -170,6 +181,22 @@ document.querySelectorAll('.cap-next-btn').forEach(btn => {
   if (nextArrow) {
     btn.addEventListener('click', () => {
       nextArrow.click();
+      setTimeout(() => {
+        const section = outer.closest('.accordion-item') || outer;
+        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 520);
+    });
+  }
+});
+
+// ===== CAPTION PREV BUTTONS =====
+document.querySelectorAll('.cap-prev-btn').forEach(btn => {
+  const slide = btn.closest('.tech-slide');
+  const outer = slide && slide.closest('.tech-carousel-outer');
+  const prevArrow = outer && outer.querySelector('.tech-side-arrow.left');
+  if (prevArrow) {
+    btn.addEventListener('click', () => {
+      prevArrow.click();
       setTimeout(() => {
         const section = outer.closest('.accordion-item') || outer;
         section.scrollIntoView({ behavior: 'smooth', block: 'start' });

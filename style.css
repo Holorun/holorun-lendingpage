@@ -528,6 +528,41 @@ html {
   gap: 9px;
 }
 
+.cap-prev-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 5px;
+  margin-top: 14px;
+  background: none;
+  border: none;
+  color: var(--teal);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  letter-spacing: 0.03em;
+  transition: opacity 0.2s, gap 0.2s;
+  opacity: 0.85;
+}
+
+.cap-prev-btn:hover {
+  opacity: 1;
+  gap: 9px;
+}
+
+.cap-btn-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.cap-btn-row .cap-prev-btn,
+.cap-btn-row .cap-next-btn {
+  margin-top: 14px;
+  width: auto;
+}
+
 .tech-carousel-outer.media-fit {
   background: transparent;
   max-width: clamp(280px, 58svw, 440px);
