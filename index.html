@@ -6,7 +6,7 @@
   <title>TETRAH – Holorun</title>
   <link rel="icon" type="image/png" href="imgs/logo (1).png">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=26">
+  <link rel="stylesheet" href="style.css?v=63">
 </head>
 <body>
 
@@ -80,14 +80,62 @@
             <li>Displaying both 2D &amp; 3D graphics and our own custom 3D web browser app.</li>
             <li>Connecting to your smart phone to share and interact with data.</li>
           </ul>
-          <div class="tetrah-imgs">
-            <div class="tetrah-img-item">
-              <img src="imgs/tetrah/Side.png" alt="3D model of TETRAH side" class="tetrah-img">
-              <p class="tetrah-caption">3D model of the finished TETRAH</p>
+          <div class="tech-carousel-wrap">
+            <div class="tech-carousel-outer media-fit">
+              <div class="tech-carousel" id="tetrahCarousel">
+                <div class="tech-track" id="tetrahTrack">
+                  <div class="tech-slide">
+                    <div class="tech-video-wrap">
+                      <video class="tech-slide-video" playsinline muted preload="metadata" id="tetrahCarVideo" src="imgs/slide-video/TETRAH/TETRAH-CAR.mp4" poster="imgs/thumbnail/tetrah.JPG"></video>
+                      <button type="button" class="tech-play-btn" aria-label="Play or pause video">
+                        <svg class="icon-play" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><polygon points="6 4 20 12 6 20"></polygon></svg>
+                        <svg class="icon-pause" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                      </button>
+                      <button type="button" class="tech-fullscreen-btn" aria-label="Fullscreen">
+                        <svg class="icon-fullscreen" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                        <svg class="icon-fullscreen-exit" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16a2 2 0 0 1 2-2h3v3a2 2 0 0 1-2 2H3"></path></svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="tech-slide">
+                    <div class="tech-video-wrap">
+                      <img src="imgs/tetrah/Side.png" alt="3D model of TETRAH — side view" class="tech-slide-video">
+                    </div>
+                  </div>
+                  <div class="tech-slide">
+                    <div class="tech-video-wrap">
+                      <img src="imgs/tetrah/Front.png" alt="3D model of TETRAH — front view" class="tech-slide-video">
+                    </div>
+                  </div>
+                  <div class="tech-slide">
+                    <div class="tech-video-wrap">
+                      <img src="imgs/tetrah/Back.png" alt="3D model of TETRAH — back view" class="tech-slide-video">
+                    </div>
+                  </div>
+                  <div class="tech-slide">
+                    <div class="tech-video-wrap">
+                      <img src="imgs/tetrah/tetrah-front.png" alt="3D model of TETRAH — front render" class="tech-slide-video">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="tech-side-arrow left" id="tetrahPrev" aria-label="Previous slide">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+              <button type="button" class="tech-side-arrow right" id="tetrahNext" aria-label="Next slide">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
             </div>
-            <div class="tetrah-img-item">
-              <video class="tetrah-img" id="tetrahVideo" playsinline muted controls preload="metadata" loop src="imgs/slide-video/TETRAH/TETRAH_weather_display.mp4" poster="imgs/thumbnail/tetrah.JPG"></video>
-              <p class="tetrah-caption">TETRAH weather display demo</p>
+            <div class="tech-counter-bar"><span id="tetrahCounter">1 / 5</span></div>
+            <div class="carousel-captions" id="tetrahCaptions">
+              <div class="tech-slide-caption">
+                <p>Tetrah is built around our ultimate vision of how people interact with AI. From its holographic display to its built-in AI, Tetrah lets you view, engage, and share information in the space around you, making your interaction with your AI machine more natural and intuitive.</p>
+                <button type="button" class="cap-next-btn" aria-label="Next slide">Next &rarr;</button>
+              </div>
+              <div class="tech-slide-caption">Side profile.</div>
+              <div class="tech-slide-caption">Front / Meet Tetrah, front view.</div>
+              <div class="tech-slide-caption">Back / Ports and connectivity.</div>
+              <div class="tech-slide-caption">A glimpse of Tetrah in action, displaying information in the space around you.</div>
             </div>
           </div>
         </div>
@@ -100,12 +148,81 @@
           <span class="acc-arrow">▾</span>
         </div>
         <div class="accordion-body" id="technology-body">
-          <p class="tetrah-intro" style="margin-bottom: 12px;"><strong>How It Works</strong></p>
-          <p class="tech-text" style="text-transform: none; font-variant: normal; letter-spacing: normal;">
-            Our holographic display builds on the same principles as projector technology. But instead of projecting onto a screen or wall, we project onto microscopic particles suspended in mid-air. These particles are held in place using "optical tweezers" and other optical techniques. Using light to suspend them, draw them into real 3D and 2D shapes, and illuminate them to reveal objects and scenes.
-          </p>
-          <div class="tech-img-wrap">
-            <video class="tech-img" id="techVideo" playsinline muted controls preload="metadata" loop src="imgs/slide-video/June-Tryitall/karate.mp4" poster="imgs/thumbnail/kara.JPG"></video>
+          <p class="tetrah-intro" style="margin-bottom: 20px;"><strong>How It Works</strong></p>
+
+          <div class="tech-carousel-wrap">
+
+            <div class="tech-carousel-outer">
+              <div class="tech-carousel" id="techCarousel">
+                <div class="tech-track" id="techTrack">
+                  <div class="tech-slide">
+                    <div class="tech-video-wrap">
+                      <video class="tech-slide-video" playsinline muted preload="metadata" loop src="imgs/slide-video/June-Tryitall/karate.mp4" poster="imgs/thumbnail/Karate-new.png"></video>
+                      <button type="button" class="tech-play-btn" aria-label="Play or pause video">
+                        <svg class="icon-play" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><polygon points="6 4 20 12 6 20"></polygon></svg>
+                        <svg class="icon-pause" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                      </button>
+                      <button type="button" class="tech-fullscreen-btn" aria-label="Fullscreen">
+                        <svg class="icon-fullscreen" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                        <svg class="icon-fullscreen-exit" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16a2 2 0 0 1 2-2h3v3a2 2 0 0 1-2 2H3"></path></svg>
+                      </button>
+                    </div>
+                    <div class="tech-slide-caption">
+                      <span class="cap-title">"The Karate Kid"</span>
+                      <span class="cap-subtitle">Initial setup | focal alignment and particle response</span>
+                      <p>Our holographic display builds on the same principles as projector technology, but instead of projecting onto a screen or wall, we project onto microscopic particles suspended in mid-air.</p>
+                      <p>In this experiment, particles are placed on a post positioned at our focal length (beam of rings). As the post is moved side to side and back and forth, the accumulated cluster of particles responds in real time, shifting and holding position with each movement. The particles move so precisely it is as if they are performing a kata, which is why we call it "The Karate Kid." This demonstrates the beam's ability to influence and control particle behavior through precise focal alignment and beam shaping.</p>
+                      <button type="button" class="cap-next-btn" aria-label="Next video">Next &rarr;</button>
+                    </div>
+                  </div>
+                  <div class="tech-slide">
+                    <div class="tech-video-wrap">
+                      <video class="tech-slide-video" playsinline muted preload="metadata" loop src="imgs/slide-video/june-2025/sheet-june.mp4"></video>
+                      <button type="button" class="tech-play-btn" aria-label="Play or pause video">
+                        <svg class="icon-play" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><polygon points="6 4 20 12 6 20"></polygon></svg>
+                        <svg class="icon-pause" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                      </button>
+                      <button type="button" class="tech-fullscreen-btn" aria-label="Fullscreen">
+                        <svg class="icon-fullscreen" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                        <svg class="icon-fullscreen-exit" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16a2 2 0 0 1 2-2h3v3a2 2 0 0 1-2 2H3"></path></svg>
+                      </button>
+                    </div>
+                    <div class="tech-slide-caption">
+                      <span class="cap-title">"Mesh"</span>
+                      <span class="cap-subtitle">Beam shaping | particle trajectory</span>
+                      <p>Toner (carbon) micro-scale particles are introduced into the beam's field in alignment with the focal configuration. The optical setup is tuned to produce the specific forces required to influence particle behavior and trajectory. A thin metallic mesh sheet is positioned in front of a spherically expanded laser beam. The mesh interrupts and redistributes the beam's intensity pattern, reshaping it into structured high and low intensity zones that guide particles into a trajectory or direction.</p>
+                      <button type="button" class="cap-next-btn" aria-label="Next video">Next &rarr;</button>
+                    </div>
+                  </div>
+                  <div class="tech-slide">
+                    <div class="tech-video-wrap">
+                      <video class="tech-slide-video" playsinline muted preload="metadata" loop src="imgs/slide-video/Aug-adv/20250819-221525%20-%20morepower.mp4" poster="imgs/thumbnail/slowerparticles-16x9.png"></video>
+                      <button type="button" class="tech-play-btn" aria-label="Play or pause video">
+                        <svg class="icon-play" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><polygon points="6 4 20 12 6 20"></polygon></svg>
+                        <svg class="icon-pause" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                      </button>
+                      <button type="button" class="tech-fullscreen-btn" aria-label="Fullscreen">
+                        <svg class="icon-fullscreen" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                        <svg class="icon-fullscreen-exit" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16a2 2 0 0 1 2-2h3v3a2 2 0 0 1-2 2H3"></path></svg>
+                      </button>
+                    </div>
+                    <div class="tech-slide-caption">
+                      <span class="cap-title">"Power Up"</span>
+                      <span class="cap-subtitle">45mW to 80mW | power per area and trap stability</span>
+                      <p>Power per unit area is an essential factor in increasing trap stability. In this video we demonstrate how particle influence improves significantly, as particles slow down once entering the field. By increasing the laser power from 45mW to 80mW within the same spherical setup, we show a direct relationship between beam intensity and trapping effectiveness.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="tech-side-arrow left" id="techPrev" aria-label="Previous slide">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              </button>
+              <button type="button" class="tech-side-arrow right" id="techNext" aria-label="Next slide">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+            </div>
+            <div class="tech-counter-bar"><span id="techCounter">1 / 3</span></div>
+
           </div>
         </div>
       </div>
@@ -205,6 +322,6 @@
     <span>© 2026 Holorun LLC</span>
   </footer>
 
-  <script src="app.js?v=19"></script>
+  <script src="app.js?v=47"></script>
 </body>
 </html>
