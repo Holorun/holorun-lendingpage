@@ -155,134 +155,21 @@ new IntersectionObserver(([entry]) => {
   }
 }, { threshold: 0 }).observe(tabBar);
 
-// ===== CUSTOM VIDEO PLAY/PAUSE OVERLAY =====
-document.querySelectorAll('.tech-video-wrap').forEach(wrap => {
-  const video = wrap.querySelector('video');
-  const btn = wrap.querySelector('.tech-play-btn');
-  const fsBtn = wrap.querySelector('.tech-fullscreen-btn');
-  if (!video || !btn) return;
-
-  btn.addEventListener('click', () => {
-    video.dataset.userControlled = 'true';
-    if (video.paused) video.play();
-    else video.pause();
-  });
-
-  video.addEventListener('play', () => wrap.classList.add('playing'));
-  video.addEventListener('pause', () => wrap.classList.remove('playing'));
-
-  // Fullscreen functionality
-  if (fsBtn) {
-    fsBtn.addEventListener('click', () => {
-      const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
-      if (!isFs) {
-        video.dataset.userControlled = 'true';
-        if (video.paused) video.play();
-        // On touch/mobile devices let the browser handle fullscreen natively via the video element
-        if ('ontouchstart' in window && video.webkitEnterFullscreen) {
-          video.webkitEnterFullscreen();
-        } else if (wrap.requestFullscreen) {
-          wrap.requestFullscreen().then(() => {
-            wrap.classList.add('fullscreen');
-          }).catch(() => {
-            if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
-          });
-        } else if (wrap.webkitRequestFullscreen) {
-          wrap.webkitRequestFullscreen();
-          wrap.classList.add('fullscreen');
-        }
-      } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        wrap.classList.remove('fullscreen');
-      }
-    });
-
-    // Listen for fullscreen change events to update the button state
-    document.addEventListener('fullscreenchange', () => {
-      if (!document.fullscreenElement) {
-        document.querySelectorAll('.tech-video-wrap').forEach(w => {
-          w.classList.remove('fullscreen');
-        });
-      }
-    });
-
-    document.addEventListener('webkitfullscreenchange', () => {
-      if (!document.webkitFullscreenElement) {
-        document.querySelectorAll('.tech-video-wrap').forEach(w => {
-          w.classList.remove('fullscreen');
-        });
-      }
-    });
-  }
-
-  // ===== TIMELINE / SEEK BAR =====
-  const bar = document.createElement('div');
-  bar.className = 'tech-progress-bar';
-  bar.setAttribute('role', 'slider');
-  bar.setAttribute('aria-label', 'Seek video');
-  bar.setAttribute('aria-valuemin', '0');
-  bar.setAttribute('aria-valuemax', '100');
-  bar.setAttribute('tabindex', '0');
-  bar.innerHTML = '<div class="tech-progress-fill"><div class="tech-progress-thumb"></div></div>';
-  wrap.appendChild(bar);
-
-  const fill = bar.querySelector('.tech-progress-fill');
-
-  const updateProgress = () => {
-    if (!video.duration) return;
-    const pct = (video.currentTime / video.duration) * 100;
-    fill.style.width = pct + '%';
-    bar.setAttribute('aria-valuenow', String(Math.round(pct)));
-  };
-
-  video.addEventListener('timeupdate', updateProgress);
-  video.addEventListener('loadedmetadata', updateProgress);
-
-  const seekFromEvent = e => {
-    if (!video.duration) return;
-    const rect = bar.getBoundingClientRect();
-    const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-    const pct = Math.min(1, Math.max(0, x / rect.width));
-    video.currentTime = pct * video.duration;
-    fill.style.width = (pct * 100) + '%';
-  };
-
-  let dragging = false;
-  bar.addEventListener('pointerdown', e => {
-    dragging = true;
-    video.dataset.userControlled = 'true';
-    bar.setPointerCapture(e.pointerId);
-    seekFromEvent(e);
-  });
-  bar.addEventListener('pointermove', e => {
-    if (dragging) seekFromEvent(e);
-  });
-  bar.addEventListener('pointerup', () => { dragging = false; });
-  bar.addEventListener('pointercancel', () => { dragging = false; });
-
-  bar.addEventListener('keydown', e => {
-    if (!video.duration) return;
-    if (e.key === 'ArrowRight') {
-      video.currentTime = Math.min(video.duration, video.currentTime + 5);
-    } else if (e.key === 'ArrowLeft') {
-      video.currentTime = Math.max(0, video.currentTime - 5);
-    } else {
-      return;
-    }
-    e.preventDefault();
-  });
-});
 
 // ===== CAPTION NEXT BUTTONS =====
 document.querySelectorAll('.cap-next-btn').forEach(btn => {
+  // Button may live inside a .tech-slide (Technology section) or in a
+  // standalone captions container outside the carousel (TETRAH section).
   const slide = btn.closest('.tech-slide');
-  const outer = slide && slide.closest('.tech-carousel-outer');
+  const outer = slide
+    ? slide.closest('.tech-carousel-outer')
+    : btn.closest('.carousel-captions')
+        ?.closest('.tech-carousel-outer, section, .accordion-item')
+        ?.querySelector('.tech-carousel-outer');
   const nextArrow = outer && outer.querySelector('.tech-side-arrow.right');
   if (nextArrow) {
     btn.addEventListener('click', () => {
       nextArrow.click();
-      // wait for slide transition (0.5s) then scroll so the full section is in view
       setTimeout(() => {
         const section = outer.closest('.accordion-item') || outer;
         section.scrollIntoView({ behavior: 'smooth', block: 'start' });
