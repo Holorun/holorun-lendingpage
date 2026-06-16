@@ -70,41 +70,72 @@ openHardwareAccordions();
 
 // ===== NAV ICON: chroma key canvas, clipped to circle =====
 (function () {
-  const video = document.getElementById('navIconSource');
+  const video  = document.getElementById('navIconSource');
   const canvas = document.getElementById('navIconCanvas');
-  const ctx = canvas.getContext('2d');
+  const ctx    = canvas.getContext('2d');
 
-  // Icon region in the 2560×1600 source video
+  // Source crop in the 2560×1600 video
   const SRC_X = 1085, SRC_Y = 618, SRC_W = 360, SRC_H = 360;
-  // Background teal to key out
-  const BG = [19, 39, 39];
-  const THRESHOLD = 28;
+  const BG = [19, 39, 39], T = 28;
 
-  const off = document.createElement('canvas');
-  off.width = SRC_W;
-  off.height = SRC_H;
+  // Process at display size (72×72) — 25× fewer pixels than 360×360
+  const PW = canvas.width, PH = canvas.height;
+  const off    = document.createElement('canvas');
+  off.width = PW; off.height = PH;
   const offCtx = off.getContext('2d', { willReadFrequently: true });
 
-  function drawFrame() {
-    if (video.readyState < 2) { requestAnimationFrame(drawFrame); return; }
+  let rafId = null;
+  let lastTs = 0;
+  const FRAME_MS = 1000 / 30; // 30 fps cap
 
-    offCtx.drawImage(video, SRC_X, SRC_Y, SRC_W, SRC_H, 0, 0, SRC_W, SRC_H);
-    const img = offCtx.getImageData(0, 0, SRC_W, SRC_H);
+  function drawFrame(now) {
+    if (video.paused || video.ended) { rafId = null; return; } // stop loop while paused
+    if (video.readyState < 2)        { rafId = requestAnimationFrame(drawFrame); return; }
+    if (now - lastTs < FRAME_MS)     { rafId = requestAnimationFrame(drawFrame); return; }
+    lastTs = now;
+
+    // Draw source region directly at display size (browser scales it cheaply in GPU)
+    offCtx.drawImage(video, SRC_X, SRC_Y, SRC_W, SRC_H, 0, 0, PW, PH);
+    const img = offCtx.getImageData(0, 0, PW, PH);
     const d = img.data;
     for (let i = 0; i < d.length; i += 4) {
-      const dr = d[i] - BG[0], dg = d[i+1] - BG[1], db = d[i+2] - BG[2];
-      if (dr*dr + dg*dg + db*db < THRESHOLD * THRESHOLD) d[i+3] = 0;
+      const dr = d[i]-BG[0], dg = d[i+1]-BG[1], db = d[i+2]-BG[2];
+      if (dr*dr + dg*dg + db*db < T*T) d[i+3] = 0;
     }
     offCtx.putImageData(img, 0, 0);
+    ctx.clearRect(0, 0, PW, PH);
+    ctx.drawImage(off, 0, 0);
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(off, 0, 0, canvas.width, canvas.height);
-    requestAnimationFrame(drawFrame);
+    rafId = requestAnimationFrame(drawFrame);
   }
 
-  video.addEventListener('loadeddata', () => requestAnimationFrame(drawFrame));
-  if (video.readyState >= 2) requestAnimationFrame(drawFrame);
+  function startLoop() {
+    if (!rafId) rafId = requestAnimationFrame(drawFrame);
+  }
+
+  video.addEventListener('loadeddata', startLoop);
+  video.addEventListener('play',       startLoop); // restart after 60s pause
+  if (video.readyState >= 2) startLoop();
+
+  // Pause on full circle for 60s then replay
+  video.addEventListener('ended', () => {
+    video.pause();
+    setTimeout(() => {
+      video.currentTime = 0;
+      video.play(); // triggers 'play' event → startLoop()
+    }, 60000);
+  });
+
+  // Stop burning CPU when browser tab is hidden
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+    } else {
+      startLoop();
+    }
+  });
 })();
+
 
 // ===== DRAWER =====
 const navToggle = document.getElementById('navToggle');
@@ -165,8 +196,13 @@ const navTabBtns = document.querySelectorAll('.nav-tab-btn');
 function syncNavTabs(activeTab) {
   navTabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === activeTab));
   tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === activeTab));
-  tabPanels.forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + activeTab).classList.add('active');
+  tabPanels.forEach(p => {
+    p.classList.remove('active');
+    // Pause all videos in inactive panels to free up CPU/memory
+    p.querySelectorAll('video').forEach(v => { if (!v.paused) v.pause(); });
+  });
+  const activePanel = document.getElementById('tab-' + activeTab);
+  activePanel.classList.add('active');
   requestAnimationFrame(() => {
     // If scrolled past the tab bar, the new panel may be shorter than the old
     // one — clamp back to the top of the tab bar so it doesn't land mid/end.
