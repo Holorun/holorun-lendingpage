@@ -68,6 +68,44 @@ function openHardwareAccordions() {
 
 openHardwareAccordions();
 
+// ===== NAV ICON: chroma key canvas, clipped to circle =====
+(function () {
+  const video = document.getElementById('navIconSource');
+  const canvas = document.getElementById('navIconCanvas');
+  const ctx = canvas.getContext('2d');
+
+  // Icon region in the 2560×1600 source video
+  const SRC_X = 1085, SRC_Y = 618, SRC_W = 360, SRC_H = 360;
+  // Background teal to key out
+  const BG = [19, 39, 39];
+  const THRESHOLD = 28;
+
+  const off = document.createElement('canvas');
+  off.width = SRC_W;
+  off.height = SRC_H;
+  const offCtx = off.getContext('2d', { willReadFrequently: true });
+
+  function drawFrame() {
+    if (video.readyState < 2) { requestAnimationFrame(drawFrame); return; }
+
+    offCtx.drawImage(video, SRC_X, SRC_Y, SRC_W, SRC_H, 0, 0, SRC_W, SRC_H);
+    const img = offCtx.getImageData(0, 0, SRC_W, SRC_H);
+    const d = img.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const dr = d[i] - BG[0], dg = d[i+1] - BG[1], db = d[i+2] - BG[2];
+      if (dr*dr + dg*dg + db*db < THRESHOLD * THRESHOLD) d[i+3] = 0;
+    }
+    offCtx.putImageData(img, 0, 0);
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(off, 0, 0, canvas.width, canvas.height);
+    requestAnimationFrame(drawFrame);
+  }
+
+  video.addEventListener('loadeddata', () => requestAnimationFrame(drawFrame));
+  if (video.readyState >= 2) requestAnimationFrame(drawFrame);
+})();
+
 // ===== DRAWER =====
 const navToggle = document.getElementById('navToggle');
 const drawer = document.getElementById('drawer');
@@ -125,12 +163,22 @@ const navTabBar = document.getElementById('navTabBar');
 const navTabBtns = document.querySelectorAll('.nav-tab-btn');
 
 function syncNavTabs(activeTab) {
-  const savedScroll = window.scrollY;
   navTabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === activeTab));
   tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === activeTab));
   tabPanels.forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + activeTab).classList.add('active');
-  requestAnimationFrame(() => window.scrollTo(0, savedScroll));
+  requestAnimationFrame(() => {
+    // If scrolled past the tab bar, the new panel may be shorter than the old
+    // one — clamp back to the top of the tab bar so it doesn't land mid/end.
+    const top = tabBar.getBoundingClientRect().top + window.scrollY - stickyNav.offsetHeight;
+    if (window.scrollY > top) {
+      window.scrollTo(0, top);
+    }
+    // Sync the sticky nav's tab row to the tab bar's actual position — the
+    // IntersectionObserver below is skipped during navSwitching, so without
+    // this it can get stuck showing/hiding after a tab switch.
+    stickyNav.classList.toggle('tabs-visible', tabBar.getBoundingClientRect().bottom <= 0);
+  });
 }
 
 let navSwitching = false;
@@ -156,19 +204,26 @@ new IntersectionObserver(([entry]) => {
 }, { threshold: 0 }).observe(tabBar);
 
 
+// ===== TECH CAROUSEL: SCROLL SECTION INTO VIEW (accounts for sticky nav) =====
+function scrollTechSectionIntoView(outer) {
+  const target = outer.closest('.accordion-item') || outer.closest('.tab-panel') || outer;
+  const top = target.getBoundingClientRect().top + window.scrollY - stickyNav.offsetHeight - 16;
+  window.scrollTo({ top, behavior: 'smooth' });
+}
+
 // ===== TECH CAROUSEL ARROWS: SCROLL SECTION INTO VIEW =====
 ['techPrev', 'techNext'].forEach(id => {
   const btn = document.getElementById(id);
   if (!btn) return;
   btn.addEventListener('click', () => {
     const outer = btn.closest('.tech-carousel-outer');
-    const section = outer && (outer.closest('.accordion-item') || outer);
-    if (section) setTimeout(() => section.scrollIntoView({ behavior: 'smooth', block: 'start' }), 520);
+    if (outer) setTimeout(() => scrollTechSectionIntoView(outer), 520);
   });
 });
 
 // ===== CAPTION NEXT BUTTONS =====
 document.querySelectorAll('.cap-next-btn').forEach(btn => {
+  if (btn.classList.contains('cap-goto-tech')) return;
   // Button may live inside a .tech-slide (Technology section) or in a
   // standalone captions container outside the carousel (TETRAH section).
   const slide = btn.closest('.tech-slide');
@@ -181,10 +236,7 @@ document.querySelectorAll('.cap-next-btn').forEach(btn => {
   if (nextArrow) {
     btn.addEventListener('click', () => {
       nextArrow.click();
-      setTimeout(() => {
-        const section = outer.closest('.accordion-item') || outer;
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 520);
+      setTimeout(() => scrollTechSectionIntoView(outer), 520);
     });
   }
 });
@@ -197,12 +249,14 @@ document.querySelectorAll('.cap-prev-btn').forEach(btn => {
   if (prevArrow) {
     btn.addEventListener('click', () => {
       prevArrow.click();
-      setTimeout(() => {
-        const section = outer.closest('.accordion-item') || outer;
-        section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 520);
+      setTimeout(() => scrollTechSectionIntoView(outer), 520);
     });
   }
+});
+
+// ===== TETRAH LAST SLIDE: GO TO TECHNOLOGY TAB =====
+document.querySelectorAll('.cap-goto-tech').forEach(btn => {
+  btn.addEventListener('click', goToTechnology);
 });
 
 // ===== TETRAH CAR VIDEO: HOLD ON LAST FRAME BEFORE LOOPING =====
@@ -310,6 +364,38 @@ function initCarousel(trackId, prevId, nextId, counterId, captionsId) {
 initCarousel('tetrahTrack', 'tetrahPrev', 'tetrahNext', 'tetrahCounter', 'tetrahCaptions');
 
 initCarousel('techTrack', 'techPrev', 'techNext', 'techCounter');
+
+// ===== DEEP LINK ROUTING (/TETRAH, /tech, /pitch-deck) =====
+function scrollToEl(el, extra = 16) {
+  const top = el.getBoundingClientRect().top + window.scrollY - stickyNav.offsetHeight - extra;
+  window.scrollTo(0, top);
+}
+
+function goToTechnology() {
+  syncNavTabs('technology');
+  requestAnimationFrame(() => {
+    setTimeout(() => scrollToEl(tabBar, 0), 50);
+  });
+}
+
+(function routeFromPath() {
+  const path = window.location.pathname.replace(/\/+$/, '').toLowerCase();
+
+  if (path === '/tetrah') {
+    syncNavTabs('hardware');
+    requestAnimationFrame(() => {
+      openHardwareAccordions();
+      setTimeout(() => scrollToEl(document.getElementById('tetrah-body').closest('.accordion-item')), 50);
+    });
+  } else if (path === '/tech') {
+    goToTechnology();
+  } else if (path === '/pitch-deck') {
+    syncNavTabs('opportunity');
+    requestAnimationFrame(() => {
+      setTimeout(() => scrollToEl(document.getElementById('the-future')), 50);
+    });
+  }
+})();
 
 // ===== SECTION REVEAL ON SCROLL =====
 const revealSections = document.querySelectorAll('.scroll-shrink');

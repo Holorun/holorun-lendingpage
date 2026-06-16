@@ -6,7 +6,7 @@
   <title>TETRAH – Holorun</title>
   <link rel="icon" type="image/png" href="imgs/logo (1).png">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=65">
+  <link rel="stylesheet" href="style.css?v=75">
 </head>
 <body>
 
@@ -28,10 +28,13 @@
 
   <!-- Sticky Navbar -->
   <header class="sticky-nav">
-    <img src="imgs/logo (1).png" alt="Holorun" class="nav-icon" id="navToggle">
+    <div class="nav-icon-wrap" id="navToggle">
+      <video class="nav-icon-source" id="navIconSource" src="imgs/slide-video/myvideo.mov" muted autoplay playsinline loop></video>
+      <canvas class="nav-icon-anim" id="navIconCanvas" width="72" height="72"></canvas>
+    </div>
     <div class="nav-tab-bar" id="navTabBar">
       <button type="button" class="nav-tab-btn active" data-tab="hardware">Hardware</button>
-      <button type="button" class="nav-tab-btn" data-tab="software">Software</button>
+      <button type="button" class="nav-tab-btn" data-tab="technology">Technology</button>
       <button type="button" class="nav-tab-btn" data-tab="opportunity">Opportunity</button>
     </div>
   </header>
@@ -58,7 +61,7 @@
     <!-- Tab Bar -->
     <div class="tab-bar">
       <button type="button" class="tab-btn active" data-tab="hardware">Hardware</button>
-      <button type="button" class="tab-btn" data-tab="software">Software</button>
+      <button type="button" class="tab-btn" data-tab="technology">Technology</button>
       <button type="button" class="tab-btn" data-tab="opportunity">Opportunity</button>
     </div>
 
@@ -66,7 +69,7 @@
     <div class="tab-panel active" id="tab-hardware">
 
       <!-- TETRAH Sub-section -->
-      <div class="accordion-item sub">
+      <div class="accordion-item sub no-border">
         <div class="accordion-header" data-target="tetrah-body">
           <span>TETRAH Project</span>
           <span class="acc-arrow">▾</span>
@@ -127,133 +130,74 @@
               <div class="tech-slide-caption">Side profile.</div>
               <div class="tech-slide-caption">Front / Meet Tetrah, front view.</div>
               <div class="tech-slide-caption">Back / Ports and connectivity.</div>
-              <div class="tech-slide-caption">A glimpse of Tetrah in action, displaying information in the space around you.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Technology Sub-section -->
-      <div class="accordion-item sub no-border">
-        <div class="accordion-header" data-target="technology-body">
-          <span>Technology</span>
-          <span class="acc-arrow">▾</span>
-        </div>
-        <div class="accordion-body" id="technology-body">
-          <p class="tetrah-intro" style="margin-bottom: 20px;"><strong>How It Works</strong></p>
-
-          <div class="tech-carousel-wrap">
-
-            <div class="tech-carousel-outer">
-              <div class="tech-carousel" id="techCarousel">
-                <div class="tech-track" id="techTrack">
-                  <div class="tech-slide">
-                    <div class="tech-video-wrap">
-                      <video class="tech-slide-video" controls playsinline muted preload="metadata" loop src="imgs/slide-video/June-Tryitall/karate.mp4" poster="imgs/thumbnail/Karate-new.png"></video>
-                    </div>
-                    <div class="tech-slide-caption">
-                      <span class="cap-title">"The Karate Kid"</span>
-                      <span class="cap-subtitle">Initial setup | focal alignment and particle response</span>
-                      <p>Our holographic display builds on the same principles as projector technology, but instead of projecting onto a screen or wall, we project onto microscopic particles suspended in mid-air.</p>
-                      <p>In this experiment, particles are placed on a post positioned at our focal length (beam of rings). As the post is moved side to side and back and forth, the accumulated cluster of particles responds in real time, shifting and holding position with each movement. The particles move so precisely it is as if they are performing a kata, which is why we call it "The Karate Kid." This demonstrates the beam's ability to influence and control particle behavior through precise focal alignment and beam shaping.</p>
-                      <button type="button" class="cap-next-btn" aria-label="Next video">Next &rarr;</button>
-                    </div>
-                  </div>
-                  <div class="tech-slide">
-                    <div class="tech-video-wrap">
-                      <video class="tech-slide-video" controls playsinline muted preload="metadata" loop src="imgs/slide-video/June-Tryitall/sheet-june.mp4" poster="imgs/thumbnail/mesh-sheet.png"></video>
-                    </div>
-                    <div class="tech-slide-caption">
-                      <span class="cap-title">"Mesh"</span>
-                      <span class="cap-subtitle">Beam shaping | particle trajectory</span>
-                      <p>Toner (carbon) micro-scale particles are introduced into the beam's field in alignment with the focal configuration. The optical setup is tuned to produce the specific forces required to influence particle behavior and trajectory. A thin metallic mesh sheet is positioned in front of a spherically expanded laser beam. The mesh interrupts and redistributes the beam's intensity pattern, reshaping it into structured high and low intensity zones that guide particles into a trajectory or direction.</p>
-                      <div class="cap-btn-row">
-                        <button type="button" class="cap-prev-btn" aria-label="Previous video">&larr; Previous</button>
-                        <button type="button" class="cap-next-btn" aria-label="Next video">Next &rarr;</button>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="tech-slide">
-                    <div class="tech-video-wrap">
-                      <video class="tech-slide-video" controls playsinline muted preload="metadata" loop src="imgs/slide-video/Aug-adv/20250819-221525%20-%20morepower.mp4" poster="imgs/thumbnail/slowerparticles-16x9.png"></video>
-                    </div>
-                    <div class="tech-slide-caption">
-                      <span class="cap-title">"Power Up"</span>
-                      <span class="cap-subtitle">45mW to 80mW | power per area and trap stability</span>
-                      <p>Power per unit area is an essential factor in increasing trap stability. In this video we demonstrate how particle influence improves significantly, as particles slow down once entering the field. By increasing the laser power from 45mW to 80mW within the same spherical setup, we show a direct relationship between beam intensity and trapping effectiveness.</p>
-                      <button type="button" class="cap-prev-btn" aria-label="Previous video">&larr; Previous</button>
-                    </div>
-                  </div>
-                </div>
+              <div class="tech-slide-caption">
+                A glimpse of Tetrah in action, displaying information in the space around you.
+                <button type="button" class="cap-next-btn cap-goto-tech" aria-label="Go to Technology section">Next: Technology &rarr;</button>
               </div>
-              <button type="button" class="tech-side-arrow left" id="techPrev" aria-label="Previous slide">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-              </button>
-              <button type="button" class="tech-side-arrow right" id="techNext" aria-label="Next slide">
-                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-              </button>
             </div>
-            <div class="tech-counter-bar"><span id="techCounter">1 / 3</span></div>
-
           </div>
         </div>
       </div>
 
     </div>
 
-    <!-- Software Tab -->
-    <div class="tab-panel" id="tab-software">
-      <div class="tagg-section">
-        <span class="tagg-badge">Chrome Extension</span>
-        <h2 class="tagg-title">Tagg — Highlight and save anything from ChatGPT, Claude, and the web</h2>
-        <p class="tagg-text">Ever read something important and lost it in a long AI conversation? Tagg lets you highlight any text on any webpage — including ChatGPT and Claude — Tagg it, and find it again in seconds, no matter when or where you saved it.</p>
-        <ul class="tagg-list">
-          <li><span class="tagg-icon">🔗</span>Highlight any text on any page — including ChatGPT and Claude conversations — and save it as a tag instantly</li>
-          <li><span class="tagg-icon">↩</span>Jump back to any tag with one click — opens the exact page and scrolls right to your highlight</li>
-          <li><span class="tagg-icon">📋</span>Save and sync your favorite links across all your devices with tagg.now</li>
-        </ul>
-        <a href="https://chromewebstore.google.com/detail/cilbhlfmmhoimnecemegpdmfidofbhde?utm_source=item-share-cb" target="_blank" class="tagg-btn">
-          <span class="tagg-btn-icon">⊕</span>
-          Add Tagg to Chrome — it's free
-          <span class="tagg-btn-ext">↗</span>
-        </a>
-      </div>
+    <!-- Technology Tab -->
+    <div class="tab-panel" id="tab-technology">
+      <p class="tetrah-intro" style="margin-bottom: 20px;"><strong>How It Works</strong></p>
 
-      <!-- tagg.now section -->
-      <div class="taggnow-section">
-        <span class="tagg-badge">tagg.now</span>
-        <h2 class="tagg-title">Save any link. Access it everywhere.</h2>
-        <p class="tagg-text">Head to <a href="https://tagg.now" target="_blank" class="tagg-inline-link">tagg.now</a> on any device and paste any link to save it instantly — no account, no sign-up. Then use your sync code to pair your devices and keep everything in perfect sync.</p>
-        <ol class="taggnow-list">
-          <li>
-            <span class="taggnow-num">1</span>
-            <div>
-              <strong>Paste any link to save it</strong>
-              <p>Go to tagg.now on any device and paste a URL — it's saved to that device instantly. No account or registration needed.</p>
+      <div class="tech-carousel-wrap">
+
+        <div class="tech-carousel-outer">
+          <div class="tech-carousel" id="techCarousel">
+            <div class="tech-track" id="techTrack">
+              <div class="tech-slide">
+                <div class="tech-video-wrap">
+                  <video class="tech-slide-video" controls playsinline muted preload="metadata" loop src="imgs/slide-video/June-Tryitall/karate.mp4" poster="imgs/thumbnail/Karate-new.png"></video>
+                </div>
+                <div class="tech-slide-caption">
+                  <span class="cap-title">"The Karate Kid"</span>
+                  <span class="cap-subtitle">Initial setup | focal alignment and particle response</span>
+                  <p>Our holographic display builds on the same principles as projector technology, but instead of projecting onto a screen or wall, we project onto microscopic particles suspended in mid-air.</p>
+                  <p>In this experiment, particles are placed on a post positioned at our focal length (beam of rings) using a NIR laser beam 780nm. As the post is moved side to side and back and forth, the accumulated cluster of particles responds in real time, shifting and holding position with each movement. The particles move so precisely it is as if they are performing a kata, which is why we call it "The Karate Kid." This demonstrates the beam's ability to influence and control particle behavior through precise focal alignment and beam shaping.</p>
+                  <button type="button" class="cap-next-btn" aria-label="Next video">Next &rarr;</button>
+                </div>
+              </div>
+              <div class="tech-slide">
+                <div class="tech-video-wrap">
+                  <video class="tech-slide-video" controls playsinline muted preload="metadata" loop src="imgs/slide-video/June-Tryitall/sheet-june.mp4" poster="imgs/thumbnail/mesh-sheet.png"></video>
+                </div>
+                <div class="tech-slide-caption">
+                  <span class="cap-title">"Mesh"</span>
+                  <span class="cap-subtitle">Beam shaping | particle trajectory</span>
+                  <p>Toner (carbon) micro-scale particles are introduced into the beam's field in alignment with the focal configuration. The optical setup is tuned to produce the specific forces required to influence particle behavior and trajectory. A thin metallic mesh sheet is positioned in front of a spherically expanded laser beam. The mesh interrupts and redistributes the beam's intensity pattern, reshaping it into structured high and low intensity zones that guide particles into a trajectory or direction.</p>
+                  <div class="cap-btn-row">
+                    <button type="button" class="cap-prev-btn" aria-label="Previous video">&larr; Previous</button>
+                    <button type="button" class="cap-next-btn" aria-label="Next video">Next &rarr;</button>
+                  </div>
+                </div>
+              </div>
+              <div class="tech-slide">
+                <div class="tech-video-wrap">
+                  <video class="tech-slide-video" controls playsinline muted preload="metadata" loop src="imgs/slide-video/Aug-adv/20250819-221525%20-%20morepower.mp4" poster="imgs/thumbnail/slowerparticles-16x9.png"></video>
+                </div>
+                <div class="tech-slide-caption">
+                  <span class="cap-title">"Power Up"</span>
+                  <span class="cap-subtitle">45mW to 80mW | power per area and trap stability</span>
+                  <p>Power per unit area is an essential factor in increasing trap stability. In this video we demonstrate how particle influence improves significantly, as particles slow down once entering the field. By increasing the laser power from 45mW to 80mW within the same spherical setup, we show a direct relationship between beam intensity and trapping effectiveness.</p>
+                  <button type="button" class="cap-prev-btn" aria-label="Previous video">&larr; Previous</button>
+                </div>
+              </div>
             </div>
-          </li>
-          <li>
-            <span class="taggnow-num">2</span>
-            <div>
-              <strong>Get your sync code</strong>
-              <p>tagg.now gives each device a unique sync code. Share that code with any other browser or device to pair them together.</p>
-            </div>
-          </li>
-          <li>
-            <span class="taggnow-num">3</span>
-            <div>
-              <strong>Everything syncs across all paired devices</strong>
-              <p>Once paired, all your saved links are shared across every device in real time. No account. No password. Just the code.</p>
-            </div>
-          </li>
-        </ol>
-        <div class="taggnow-note">
-          <p><strong>Note:</strong> Highlights only work on devices where the Tagg extension is installed. They will not appear on mobile or any browser without the extension.</p>
+          </div>
+          <button type="button" class="tech-side-arrow left" id="techPrev" aria-label="Previous slide">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button type="button" class="tech-side-arrow right" id="techNext" aria-label="Next slide">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
         </div>
-        <a href="https://tagg.now" target="_blank" class="tagg-btn taggnow-btn">
-          <span class="tagg-btn-icon">↗</span>
-          Open tagg.now
-        </a>
+        <div class="tech-counter-bar"><span id="techCounter">1 / 3</span></div>
+
       </div>
     </div>
 
@@ -294,6 +238,6 @@
     <span>© 2026 Holorun LLC</span>
   </footer>
 
-  <script src="app.js?v=49"></script>
+  <script src="app.js?v=75"></script>
 </body>
 </html>

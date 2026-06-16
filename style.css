@@ -152,10 +152,47 @@ html {
   box-shadow: 0 2px 20px rgba(0,0,0,0.3);
 }
 
-.nav-icon {
-  height: 36px;
-  width: auto;
+.nav-icon-wrap {
+  --icon-size: 36px;
+  position: relative;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  display: inline-block;
   cursor: pointer;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.nav-icon-source {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.nav-icon-anim {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  pointer-events: none;
+  border-radius: 50%;
+  transform: scaleX(-1);
+}
+
+.nav-icon-anim.glow {
+  animation: icon-glow-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes icon-glow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 3px rgba(0, 200, 180, 0.7)) drop-shadow(0 0 8px rgba(0, 200, 180, 0.45));
+  }
+  50% {
+    filter: drop-shadow(0 0 0px rgba(0, 200, 180, 0)) drop-shadow(0 0 0px rgba(0, 200, 180, 0));
+  }
 }
 
 .nav-tab-bar {
@@ -208,9 +245,8 @@ html {
     gap: 8px;
   }
 
-  .nav-icon {
-    cursor: pointer;
-    height: 28px;
+  .nav-icon-wrap {
+    --icon-size: 28px;
     flex-shrink: 0;
   }
 
