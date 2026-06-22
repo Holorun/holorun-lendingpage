@@ -1,0 +1,252 @@
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #000;
+  color: #eaeaea;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ===== reusable dashed-stroke ring — reuse anywhere we need a dotted/dashed circle ===== */
+.dash-ring {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-dasharray: 3 4;
+}
+
+/* ===== hero ===== */
+.ring-hero {
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 24px 20px;
+  overflow: hidden;
+}
+
+.ring-stage {
+  position: relative;
+  width: min(720px, 90vw, 78vh, 78dvh);
+  aspect-ratio: 1 / 1;
+  perspective: 1000px;
+}
+
+.ring-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* the ring is 3 stacked layers, each tilting independently in 3D, never in
+   sync with each other — continuous, ambient, runs forever */
+.ring-layer {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+/* spin order: circle (rim) spins alone first; then gasket (bezel) and
+   dashes (segments) spin together as one combined motion — segments are
+   part of the gear, not a separate third phase.
+
+   The spin (Z-axis) and the ambient wobble (X/Y tilt) are now two fully
+   SEPARATE animations on two separate CSS properties — `rotate` for the
+   spin, `transform` for the wobble. They compose automatically (the browser
+   applies rotate, then transform) but never have to hand off velocity to
+   each other, since neither one ever has to match the other's speed at a
+   shared keyframe boundary. This removes the flick that kept showing up
+   when both were forced into one shared keyframe timeline. */
+/* ease-in-out on the spin itself: it ramps up gently from a stop, and eases
+   back down to a stop — instead of snapping straight to/from full speed,
+   which is what was causing the flick right as it finished */
+.ring-layer--rim      { animation: spin-rim 12s ease-in-out infinite, wobble-rim 12s ease-in-out infinite; }
+/* bezel's spin starts at 2.5s — right as the gasket+gear reveal finishes (which itself only starts once the rim's draw-in is done at 1.6s) */
+.ring-layer--bezel    { animation: spin-bezel 15s ease-in-out 2.5s infinite, wobble-bezel 15s ease-in-out 2.5s infinite; }
+/* segments spin together with the bezel, starting at the same time */
+.ring-layer--segments { animation: spin-segments 15s ease-in-out 2.5s infinite, wobble-segments 15s ease-in-out 2.5s infinite; }
+
+/* spin: rotates flat (Z-axis, like a wheel) for the first slice of the
+   cycle, then holds still at 0 for the rest. The 360deg->0deg reset is an
+   invisible jump (visually identical angle) */
+@keyframes spin-rim     { 0% { rotate: z 0deg; } 18%    { rotate: z 360deg; } 18.01% { rotate: z 0deg; } 100% { rotate: z 0deg; } }
+@keyframes spin-bezel   { 0% { rotate: z 0deg; } 15%    { rotate: z 360deg; } 15.01% { rotate: z 0deg; } 100% { rotate: z 0deg; } }
+@keyframes spin-segments{ 0% { rotate: z 0deg; } 15%    { rotate: z 360deg; } 15.01% { rotate: z 0deg; } 100% { rotate: z 0deg; } }
+
+/* wobble: the small ambient 3D tilt, holding flat while the spin (above)
+   happens, then drifting for the rest of the cycle. Completely independent
+   timeline from the spin — no shared keyframes, no velocity to match */
+@keyframes wobble-rim {
+  0%, 18.01% { transform: rotateX(0deg)  rotateY(0deg); }
+  45%        { transform: rotateX(6deg)  rotateY(-4deg); }
+  68%        { transform: rotateX(-3deg) rotateY(5deg); }
+  90%        { transform: rotateX(4deg)  rotateY(3deg); }
+  100%       { transform: rotateX(0deg)  rotateY(0deg); }
+}
+
+@keyframes wobble-bezel {
+  0%, 15.01% { transform: rotateX(0deg)  rotateY(0deg); }
+  50%        { transform: rotateX(-5deg) rotateY(6deg); }
+  75%        { transform: rotateX(4deg)  rotateY(-5deg); }
+  100%       { transform: rotateX(0deg)  rotateY(0deg); }
+}
+
+@keyframes wobble-segments {
+  0%, 15.01% { transform: rotateX(0deg)  rotateY(0deg)  translateZ(0px); }
+  40%        { transform: rotateX(3deg)  rotateY(4deg)  translateZ(35px); }
+  60%        { transform: rotateX(3deg)  rotateY(4deg)  translateZ(0px); }
+  75%        { transform: rotateX(-4deg) rotateY(-3deg) translateZ(-30px); }
+  88%        { transform: rotateX(-4deg) rotateY(-3deg) translateZ(0px); }
+  100%       { transform: rotateX(0deg)  rotateY(0deg)  translateZ(0px); }
+}
+
+/* glow halo + thick white rim band — its own separated layer, sits inside the gasket */
+/* both trace themselves in on load, like the nav icon's circle reveal */
+.ring-glow {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.45);
+  stroke-width: 16;
+  stroke-dasharray: 1295;
+  stroke-dashoffset: 1295;
+  animation: ring-draw 1.6s ease-out forwards;
+}
+
+.ring-rim {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 13;
+  stroke-dasharray: 1295;
+  stroke-dashoffset: 1295;
+  animation: ring-draw 1.6s ease-out forwards;
+}
+
+@keyframes ring-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes fade-in {
+  to { opacity: 1; }
+}
+
+/* mid gray gasket band — its own separated layer between the rim and the segments */
+/* gasket draws in TOGETHER with the white rim (same timing, both start at
+   0s and finish at 1.6s) — only the gear edges/arches wait until after */
+.ring-gasket {
+  fill: none;
+  stroke: #4a4a4a;
+  stroke-width: 9;
+  stroke-dasharray: 1438;
+  stroke-dashoffset: 1438;
+  animation: ring-draw 1.6s ease-out forwards;
+}
+
+.ring-segments,
+.ring-labels {
+  opacity: 0;
+  /* segments only appear once the gear has fully revealed itself (2.5s) */
+  animation: fade-in 0.6s ease-out 2.5s forwards;
+}
+
+/* light nav segments — stroked so each piece reads as its own separated layer */
+.ring-segment {
+  fill: #e7e7e7;
+  stroke: #000;
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: fill 0.2s ease, filter 0.2s ease;
+  outline: none;
+}
+
+.ring-segment:hover,
+.ring-segment:focus-visible {
+  fill: #ffffff;
+  filter: drop-shadow(0 0 10px rgba(0, 200, 180, 0.6));
+}
+
+/* gear reveal: edges (stroke) appear first, then the gray fill — starts
+   only once the rim has actually finished drawing in (1.6s), not before */
+.ring-spoke {
+  fill: #4a4a4a;
+  fill-opacity: 0;
+  stroke: rgba(255, 255, 255, 0.4);
+  stroke-opacity: 0;
+  stroke-width: 1.5;
+  animation: spoke-reveal 0.9s ease-out 1.6s forwards;
+}
+
+@keyframes spoke-reveal {
+  0%   { fill-opacity: 0; stroke-opacity: 0; }
+  35%  { fill-opacity: 0; stroke-opacity: 1; }
+  70%  { fill-opacity: 1; stroke-opacity: 1; }
+  100% { fill-opacity: 1; stroke-opacity: 0; }
+}
+
+.ring-label {
+  font-size: 28px;
+  font-weight: 600;
+  fill: #111;
+  letter-spacing: 0.5px;
+  dominant-baseline: middle;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ===== floating decorative icons ===== */
+.deco {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  color: rgba(255, 255, 255, 0.35);
+  pointer-events: none;
+  opacity: 0;
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+/* these wait until everything else has finished: rim drawn (1.6s) -> gear
+   revealed (2.5s) -> segments appeared + their first spin together with the
+   bezel completes (~4.75s) -> only then do the decorative icons appear */
+.deco-target { top: -4%;  left: 50%;  transform: translateX(-50%); animation-delay: 4.75s; }
+.deco-nodes  { top: 36%;  left: -9%;                               animation-delay: 4.85s; }
+.deco-dots   { top: 34%;  right: -10%;                             animation-delay: 4.95s; }
+.deco-cube   { bottom: 2%; left: 2%; width: 30px; height: 30px;    animation-delay: 5.05s; }
+.deco-eye    { bottom: 4%; right: 4%; width: 34px; height: 34px;   animation-delay: 5.15s; }
+
+.deco-hint {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  animation: fade-in 0.5s ease-out 5.25s forwards;
+}
+
+/* ===== placeholder sections ===== */
+.placeholder {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.placeholder h2 {
+  font-size: 32px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ===== mobile ===== */
+@media (max-width: 600px) {
+  .ring-stage { width: min(420px, 92vw); }
+  .deco { width: 28px; height: 28px; }
+  .deco-cube { width: 22px; height: 22px; }
+  .deco-eye  { width: 24px; height: 24px; }
+  .deco-nodes { left: 0; }
+  .deco-dots  { right: 0; }
+}
