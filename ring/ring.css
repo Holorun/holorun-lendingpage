@@ -35,6 +35,9 @@ html, body {
   width: min(720px, 90vw, 78vh, 78dvh);
   aspect-ratio: 1 / 1;
   perspective: 1000px;
+  container-type: inline-size;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 .ring-svg {
@@ -50,6 +53,8 @@ html, body {
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
+  will-change: transform, rotate;
+  backface-visibility: hidden;
 }
 
 /* spin order: circle (rim) spins alone first; then gasket (bezel) and
@@ -196,6 +201,165 @@ html, body {
   pointer-events: none;
   user-select: none;
 }
+
+/* ===== funnel panel (inside the ring's center void) ===== */
+/* sized in cqw (container-query width, relative to .ring-stage) so it
+   scales together with the SVG ring at any viewport size */
+
+.funnel {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 1;
+  /* narrows from the header down to a waist around "what has been
+     changing", then flares back out wider than the header by "inside" —
+     shared by the shape and its echo outline so they stay in sync */
+  --funnel-clip: polygon(
+    10% 0%,
+    90% 0%,
+    66% 50%,
+    93% 100%,
+    7% 100%,
+    34% 50%
+  );
+}
+
+/* bg, outline svg and shape sit in the same grid cell, centered on each other */
+.funnel-bg,
+.funnel-outline,
+.funnel-shape {
+  grid-area: 1 / 1;
+  transform: translateY(0.5cqw);
+}
+
+.funnel-bg {
+  width: 44cqw;
+  aspect-ratio: 3 / 2;
+  background: #000;
+  clip-path: polygon(50% 8%, 88% 25%, 88% 50%, 88% 50%, 50% 92%, 12% 75%, 12% 50%, 12% 50%);
+  opacity: 0;
+  z-index: 0;
+}
+/* final shape: polygon(8% 5%, 92% 5%, 62% 36%, 62% 63%, 92% 100%, 8% 100%, 38% 63%, 38% 36%) */
+
+.funnel-outline {
+  width: 44cqw;
+  aspect-ratio: 3 / 2;
+  overflow: visible;
+  position: relative;
+  z-index: 2;
+}
+
+.funnel-row-stroke {
+  fill: none;
+  stroke: #00bfff;
+  stroke-width: 0.3;
+  filter: drop-shadow(0 0 0.5px #00bfff) drop-shadow(0 0 3px #00bfff);
+  opacity: 0;
+}
+
+.funnel--open .funnel-row-stroke {
+  animation: funnel-fade-in 0.5s ease-out 0.5s forwards;
+}
+
+.funnel-outline-main {
+  fill: none;
+  stroke: #00bfff;
+  stroke-width: 0.5;
+  filter: drop-shadow(0 0 0.3px #00bfff) drop-shadow(0 0 4px #00bfff);
+  /* draw-in on open */
+  stroke-dasharray: 139;
+  stroke-dashoffset: 139;
+  opacity: 0;
+}
+
+.funnel-outline-echo {
+  display: none;
+}
+
+.funnel-shape {
+  --row-gap: 1cqw;
+  width: 44cqw;
+  aspect-ratio: 3 / 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--row-gap);
+  opacity: 0;
+  z-index: 1;
+}
+
+/* ===== funnel open animation ===== */
+@keyframes funnel-morph {
+  0%   { clip-path: polygon(50% 8%, 88% 25%, 88% 50%, 88% 75%, 50% 92%, 12% 75%, 12% 50%, 12% 25%); opacity: 0; }
+  15%  { opacity: 1; }
+  100% { clip-path: polygon(18% 0%, 82% 0%, 64% 35%, 64% 65%, 82% 100%, 18% 100%, 36% 65%, 36% 35%); opacity: 1; }
+}
+
+@keyframes funnel-stroke-draw {
+  0%   { stroke-dashoffset: 139; opacity: 0; }
+  10%  { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+
+@keyframes funnel-fade-in {
+  to { opacity: 1; }
+}
+
+.funnel--open .funnel-bg {
+  animation: funnel-morph 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.funnel--open .funnel-shape {
+  animation: funnel-fade-in 0.5s ease-out 0.3s forwards;
+}
+
+.funnel--open .funnel-outline-main {
+  animation: funnel-stroke-draw 0.7s ease-out 0.1s forwards;
+}
+
+.funnel--open .funnel-outline-echo {
+  animation: funnel-fade-in 0.35s ease-out 0.6s forwards;
+}
+
+.section {
+  flex: 1 1 0%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.3cqw;
+  text-transform: uppercase;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(40, 160, 220, .65), rgba(5, 70, 120, .65));
+}
+
+.holorun {
+  flex: 1 1 0%;
+  font-size: 2.05cqw;
+  background: linear-gradient(180deg, #3fd0f5, #14a8e0);
+}
+
+.section--wrap {
+  flex: 1 1 0%;
+  font-size: 1cqw;
+  line-height: 1.2;
+  padding: 0 4%;
+}
+
+.section--inside {
+  flex: 1 1 0%;
+}
+
+/* ── individual row sizes — symmetric: Holorun=Inside, Brief=Platform, Beginning=WHBC ── */
+.row-holorun  { flex: 1.5 1 0%; font-size: 2cqw;   display: flex; justify-content: center; align-items: center; clip-path: polygon(18% 0%, 82% 0%, 73.8% 100%, 26.2% 100%); }
+.row-brief    { flex: 1.3 1 0%; font-size: 1.3cqw;  clip-path: polygon(27.7% 0%, 72.3% 0%, 65.1% 100%, 34.9% 100%); }
+.row-beginning{ flex: 1.2 1 0%; font-size: 1.2cqw;  clip-path: polygon(36% 0%, 64% 0%, 64% 100%, 36% 100%); }
+.row-whbc     { flex: 1.2 1 0%; font-size: 1.1cqw;  line-height: 1.2; clip-path: polygon(36% 0%, 64% 0%, 64% 100%, 36% 100%); }
+.row-platform { flex: 1.3 1 0%; font-size: 1.3cqw;  clip-path: polygon(34.9% 0%, 65.1% 0%, 72.3% 100%, 27.7% 100%); }
+.row-inside   { flex: 1.5 1 0%; font-size: 2cqw;   clip-path: polygon(26.2% 0%, 73.8% 0%, 82% 100%, 18% 100%); }
 
 /* ===== floating decorative icons ===== */
 .deco {

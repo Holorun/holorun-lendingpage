@@ -53,7 +53,7 @@
       <svg class="ring-svg ring-layer ring-layer--rim" viewBox="0 0 800 800" aria-hidden="true">
         <defs>
           <filter id="ringGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="14" result="blur"/>
+            <feGaussianBlur stdDeviation="10" result="blur"/>
             <feMerge>
               <feMergeNode in="blur"/>
               <feMergeNode in="SourceGraphic"/>
@@ -81,6 +81,26 @@
         <g class="ring-labels"></g>
       </svg>
 
+      <!-- funnel panel: sits inside the ring's center void. Static for now,
+           step 1 of the funnel feature — hourglass shape (wide top/bottom,
+           pinched waist through the middle rows) + sub-nav rows, no
+           content/interaction yet -->
+      <div class="funnel">
+        <div class="funnel-bg"></div>
+        <div class="funnel-shape">
+          <div class="section row-holorun">Holorun</div>
+          <div class="section row-brief">Brief</div>
+          <div class="section row-beginning">Beginning</div>
+          <div class="section row-whbc">What Has Been Changing</div>
+          <div class="section row-platform">The Platform</div>
+          <div class="section row-inside">Inside</div>
+        </div>
+        <svg class="funnel-outline" viewBox="0 0 43 32" preserveAspectRatio="none" aria-hidden="true">
+          <!-- outer outline: computed intersections — Y gap 1.5, waist X gap 0.8 -->
+          <polygon class="funnel-row-stroke" points="5.9,-1.5 37.1,-1.5 28.32,11.2 28.32,20.8 37.1,33.5 5.9,33.5 14.68,20.8 14.68,11.2"/>
+        </svg>
+      </div>
+
     </div>
 
     <svg class="deco deco-hint" viewBox="0 0 40 40" aria-hidden="true">
@@ -90,5 +110,11 @@
   </main>
 
   <script src="ring.js"></script>
+  <script>
+    setTimeout(function() {
+      document.querySelector('.funnel').classList.add('funnel--open');
+    }, 500);
+
+  </script>
 </body>
 </html>
