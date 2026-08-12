@@ -75,7 +75,7 @@ openHardwareAccordions();
   const ctx    = canvas.getContext('2d');
 
   // Source crop in the 2560×1600 video
-  const SRC_X = 1085, SRC_Y = 618, SRC_W = 360, SRC_H = 360;
+  const SRC_X = 1055, SRC_Y = 582, SRC_W = 420, SRC_H = 420;
   const BG = [19, 39, 39], T = 28;
 
   // Process at display size (72×72) — 25× fewer pixels than 360×360
